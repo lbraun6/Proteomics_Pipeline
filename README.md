@@ -11,7 +11,8 @@ Code for proteomic analysis of prefrontal and hippocampal samples after chronic 
 
 -volcano_log(a): Function that computes the base 10 logarithm of an integer a. In create_volcano.py, this function is applied to the pandas.Series containing the untransformed p-values of volcano_frame.
 
-### The following 6 functions read raw data from raw data spreadsheets organized in the format of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx. These sheets contain rows representing proteins and a hierarchically organized header dividing the columns representing each animal into different experimental groups. Each cell provides raw log10(intensity) values of the protein of the corresponding row for the animal of the corresponding column. Descriptions of each function can be found below:
+### The following 6 functions read raw data from raw data spreadsheets organized in the format of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx. 
+These sheets contain rows representing proteins and a hierarchically organized header dividing the columns representing each animal into different experimental groups. Each cell provides raw log10(intensity) values of the protein of the corresponding row for the animal of the corresponding column. Descriptions of each function can be found below:
 
 -genetic_comparison(male_file, female_file): Identifies proteins significantly upregulated or downregulated as a result of the knockout of microglial HMGB1 for each sex and brain region. This function creates the required data structures and passes them to create_volcano() and create_cluster() for the creation of figures. The arguments male_file and female_file should be the absolute paths of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx respectively.
 
