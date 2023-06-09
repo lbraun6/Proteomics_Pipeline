@@ -1,7 +1,7 @@
-# Proteomics Pipeline
+## Proteomics Pipeline
 Code for proteomic analysis of prefrontal and hippocampal samples after chronic unpredictable stress regime to examine the effect of microglial HMGB1 and sex on the brain's response to chronic stress. The all_analyses.py file contains all code necessary for the identification and visualization of proteins significantly upregulated or downregulated between different experimental conditions. The all_analyses.py file is divided into 10 different functions.
-# Description of Functions Contained in all_analyses.py
-The following 4 functions are strictly for the visualization of proteins in the form of different figures:
+## Description of Functions Contained in all_analyses.py
+# The following 4 functions are strictly for the visualization of proteins in the form of different figures:
 
 -create_volcano(volcano_frame, comparison, exceptions=None): Creates a volcano plot from a provided dataframe (volcano_frame) of untransformed p-values and log2(fold changes). Labels the top 15 most significant upregulated and downregulated proteins. Excludes labelling proteins provided in an iterable exceptions argument.
 
@@ -11,7 +11,7 @@ The following 4 functions are strictly for the visualization of proteins in the 
 
 -volcano_log(a): Function that computes the base 10 logarithm of an integer a. In create_volcano.py, this function is applied to the pandas.Series containing the untransformed p-values of volcano_frame.
 
-The following 6 functions read raw data from raw data spreadsheets organized in the format of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx. These sheets contain rows representing proteins and a hierarchically organized header dividing the columns representing each animal into different experimental groups. Each cell provides raw log10(intensity) values of the protein of the corresponding row for the animal of the corresponding column. Descriptions of each function can be found below:
+# The following 6 functions read raw data from raw data spreadsheets organized in the format of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx. These sheets contain rows representing proteins and a hierarchically organized header dividing the columns representing each animal into different experimental groups. Each cell provides raw log10(intensity) values of the protein of the corresponding row for the animal of the corresponding column. Descriptions of each function can be found below:
 
 -genetic_comparison(male_file, female_file): Identifies proteins significantly upregulated or downregulated as a result of the knockout of microglial HMGB1 for each sex and brain region. This function creates the required data structures and passes them to create_volcano() and create_cluster() for the creation of figures. The arguments male_file and female_file should be the absolute paths of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx respectively.
 
