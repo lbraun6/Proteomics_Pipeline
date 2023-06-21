@@ -9,6 +9,10 @@ from adjustText import adjust_text
 import seaborn as sns
 from matplotlib.patches import Rectangle
 
+# Update font for all figures
+font = {'family': 'georgia'}
+plt.rc('font', **font)
+
 
 def genetic_comparison(male_file, female_file):
     # MALE -------------------------------------------------------------------------------------------------------------
@@ -151,7 +155,7 @@ def genetic_comparison(male_file, female_file):
                    "Female HIP WT Control v. Female HIP KO Control", female_hip_names)
 
 
-def sex_comparison(male_file, female_file):
+def sex_comparison(male_file, female_file, venn_file):
     # MALE -------------------------------------------------------------------------------------------------------------
     # Read raw data Excel sheet into a dataframe with a multilevel header. Index column is the protein name
     male_raw_intensities = pd.read_excel(male_file, "Raw log10 intensities", header=[0, 1, 2, 3], index_col=3)
@@ -328,18 +332,22 @@ def sex_comparison(male_file, female_file):
     create_volcano(pfc_wt_volcano, "Male PFC WT Stress v. Female PFC WT Stress")
     create_cluster(pfc_wt_cluster, male_pfc_wt_stress_protein_expression, female_pfc_wt_stress_protein_expression,
                    "Male PFC WT Stress v. Female PFC WT Stress", pfc_wt_names)
+    create_venn(venn_file, "Male PFC WT v. Female PFC WT")
 
     create_volcano(pfc_ko_volcano, "Male PFC KO Stress v. Female PFC KO Stress")
     create_cluster(pfc_ko_cluster, male_pfc_ko_stress_protein_expression, female_pfc_ko_stress_protein_expression,
                    "Male PFC KO Stress v. Female PFC KO Stress", pfc_ko_names)
+    create_venn(venn_file, "Male PFC KO v. Female PFC KO")
 
     create_volcano(hip_wt_volcano, "Male HIP WT Stress v. Female HIP WT Stress")
     create_cluster(hip_wt_cluster, male_hip_wt_stress_protein_expression, female_hip_wt_stress_protein_expression,
                    "Male HIP WT Stress v. Female HIP WT Stress", hip_wt_names)
+    create_venn(venn_file, "Male HIP WT v. Female HIP WT")
 
     create_volcano(hip_ko_volcano, "Male HIP KO Stress v. Female HIP KO Stress")
     create_cluster(hip_ko_cluster, male_hip_ko_stress_protein_expression, female_hip_ko_stress_protein_expression,
                    "Male HIP KO Stress v. Female HIP KO Stress", hip_ko_names)
+    create_venn(venn_file, "Male HIP KO v. Female HIP KO")
 
     # with pd.ExcelWriter(male_file[:male_file.rfind("\\")] + "\\" + "Male v. Female Volcano Plot Dataset.xlsx") as writer:
     #     pfc_wt_volcano.to_excel(writer, sheet_name="PFC WT", index=False)
@@ -397,6 +405,15 @@ def stress_comparison(file, sex):
     pfc_wt_names = []
     hip_ko_names = []
     hip_wt_names = []
+
+    # Initialize lists for scatter plots
+    scatter_id_pfc = []
+    scatter_id_hip = []
+
+    scatter_pfc_wt = []
+    scatter_pfc_ko = []
+    scatter_hip_wt = []
+    scatter_hip_ko = []
 
     # Iterate through every protein in the raw data file, select the values within matching control and stress groups,
     # compare these groups to calculate p-values and store the protein name, direction of regulation, and fold change
@@ -461,16 +478,31 @@ def stress_comparison(file, sex):
                 hip_wt_cluster += [list_1 + list_2]
                 hip_wt_names += [protein]
 
-    pfc_wt_volcano = pd.DataFrame({"Protein": id_pfc_wt, "Fold Change": fc_pfc_wt,
-                                   "p-Value": p_pfc_wt})
-    pfc_ko_volcano = pd.DataFrame({"Protein": id_pfc_ko, "Fold Change": fc_pfc_ko,
-                                   "p-Value": p_pfc_ko})
-    hip_wt_volcano = pd.DataFrame({"Protein": id_hip_wt, "Fold Change": fc_hip_wt,
-                                   "p-Value": p_hip_wt})
-    hip_ko_volcano = pd.DataFrame({"Protein": id_hip_ko, "Fold Change": fc_hip_ko,
-                                   "p-Value": p_hip_ko})
+        # For Scatter Plots
+        if isinstance(pfc_wt, list) and isinstance(pfc_ko, list):
+            scatter_id_pfc += [protein]
+            scatter_pfc_wt += [pfc_wt[2]]
+            scatter_pfc_ko += [pfc_ko[2]]
+
+        if isinstance(hip_wt, list) and isinstance(hip_ko, list):
+            scatter_id_hip += [protein]
+            scatter_hip_wt += [hip_wt[2]]
+            scatter_hip_ko += [hip_ko[2]]
+
+    pfc_wt_volcano = pd.DataFrame({"Protein": id_pfc_wt, "Fold Change": fc_pfc_wt, "p-Value": p_pfc_wt})
+    pfc_ko_volcano = pd.DataFrame({"Protein": id_pfc_ko, "Fold Change": fc_pfc_ko, "p-Value": p_pfc_ko})
+    hip_wt_volcano = pd.DataFrame({"Protein": id_hip_wt, "Fold Change": fc_hip_wt, "p-Value": p_hip_wt})
+    hip_ko_volcano = pd.DataFrame({"Protein": id_hip_ko, "Fold Change": fc_hip_ko, "p-Value": p_hip_ko})
+
+    pfc_scatter = pd.DataFrame({"Protein": scatter_id_pfc, "WT Fold Change": scatter_pfc_wt,
+                                "KO Fold Change": scatter_pfc_ko})
+    hip_scatter = pd.DataFrame({"Protein": scatter_id_hip, "WT Fold Change": scatter_hip_wt,
+                                "KO Fold Change": scatter_hip_ko})
 
     if sex == "Male":
+        create_scatter(pfc_scatter, "Male PFC WT v. KO")
+        create_scatter(hip_scatter, "Male HIP WT v. KO")
+
         create_volcano(pfc_wt_volcano, sex + " PFC WT Stress v. PFC WT Control", exceptions=["Camkk2"])
         create_cluster(pfc_wt_cluster, pfc_wt_stress_protein_expression, pfc_wt_ctl_protein_expression,
                        sex + " PFC WT Stress v. " + sex + " PFC WT Control", pfc_wt_names)
@@ -488,6 +520,9 @@ def stress_comparison(file, sex):
                        sex + " HIP KO Stress v. " + sex + " HIP KO Control", hip_ko_names)
 
     elif sex == "Female":
+        create_scatter(pfc_scatter, "Female PFC WT v. KO")
+        create_scatter(hip_scatter, "Female HIP WT v. KO")
+
         create_volcano(pfc_wt_volcano, sex + " PFC WT Stress v. PFC WT Control")
         create_cluster(pfc_wt_cluster, pfc_wt_stress_protein_expression, pfc_wt_ctl_protein_expression,
                        sex + " PFC WT Stress v. " + sex + " PFC WT Control", pfc_wt_names)
@@ -725,9 +760,14 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
             un_reg["x"] += [volcano_frame["Fold Change"][x]]
             un_reg["y"] += [volcano_frame["p-Value"][x]]
 
+    # Eliminate isoforms
+    up_reg = pd.DataFrame(up_reg)
+    down_reg = pd.DataFrame(down_reg)
+    up_reg.drop_duplicates(subset=["id"], inplace=True)
+    down_reg.drop_duplicates(subset=["id"], inplace=True)
+
     # Plot significantly up-regulated proteins in blue with annotations
     ax.scatter(up_reg["x"], up_reg["y"], c="b", marker=".")
-    up_reg = pd.DataFrame(up_reg)
     up_len = len(up_reg["x"])
     if len(up_reg["x"]) > 10:
         up_reg = up_reg.nlargest(10, "y", "all")
@@ -749,7 +789,6 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
 
     # Plot significantly down-regulated proteins in red with annotations
     ax.scatter(down_reg["x"], down_reg["y"], c="r", marker=".")
-    down_reg = pd.DataFrame(down_reg)
     down_len = len(down_reg["x"])
     if len(down_reg["x"]) > 10:
         down_reg = down_reg.nlargest(10, "y", "all")
@@ -802,23 +841,34 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
                    transform=ax.transAxes)
 
     # Figure title and axis titles
-    ax.set_xlabel(r"$log_{2}(Fold Change)$", fontsize="x-large")
-    ax.set_ylabel(r"$-log_{10}(p-Value)$", fontsize="x-large")
-    plt.suptitle(comparison, fontsize="x-large")
+    ax.set_xlabel(r"$log_{2}(Fold Change)$", fontsize=16)
+    ax.set_ylabel(r"$-log_{10}(p-Value)$", fontsize=16)
+    plt.suptitle(comparison, fontsize=16)
+
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
 
     # Formatting
     obj3 = ax.axhline(y=(-1 * np.log10(0.05)), linestyle="--", c="black")
     ax.axvline(x=0, linestyle="-", c="black")
+
     ax.spines["bottom"].set_color("black")
     ax.spines["top"].set_color("black")
     ax.spines["left"].set_color("black")
     ax.spines["right"].set_color("black")
+
+    ax.spines["bottom"].set_linewidth(2)
+    ax.spines["top"].set_linewidth(2)
+    ax.spines["left"].set_linewidth(2)
+    ax.spines["right"].set_linewidth(2)
+
     fig.tight_layout()
     plt.savefig("Figures" + "\\" + "Volcano " + comparison + ".png")
     plt.show()
 
 
 def create_cluster(cluster_array, group_1, group_2, comparison, names):
+    # Font Information: family=georgia, size=14 (13 for y-ticks), color=black
     col_names = []
     row_names = []
     name_1 = comparison.split(" v. ")[0]
@@ -844,13 +894,20 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
     for x in range(1, len(group_2.columns) + 1):
         col_names += [name_2 + " " + str(x)]
 
-    # Make Cluster Map
+    # Eliminate isoforms
     cluster_frame = pd.DataFrame(cluster_array, columns=col_names, index=row_names)
+    cluster_frame = cluster_frame[~cluster_frame.index.duplicated(keep='first')]
+
+    # Make Cluster Map
     c = sns.clustermap(cluster_frame, col_cluster=False, z_score=0, cmap=sns.color_palette("vlag_r", as_cmap=True),
                        cbar_kws=dict(orientation='horizontal'), dendrogram_ratio=0.15, xticklabels=False,
                        figsize=(6, 8), norm=mpl.colors.Normalize(vmin=-2, vmax=2))
+    plt.setp(c.ax_heatmap.yaxis.get_majorticklabels(), rotation=0, fontsize=13)
     plt.subplots_adjust(bottom=0.1)
-    plt.suptitle(comparison, x=0.5)
+    plt.suptitle(comparison, x=0.5, fontsize=14)
+
+    if len(cluster_frame.index) <= 15:
+        plt.subplots_adjust(right=0.85)
 
     # Color Bar Formatting
     c.ax_col_dendrogram.set_visible(False)
@@ -874,317 +931,254 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
                            fill=False, edgecolor='black', lw=2, linestyle="--"))
 
     # Group Bars and Group Labels
-    if len(cluster_frame.index) >= 140:
+    if len(cluster_frame.index) >= 130:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 3), len(group_1.columns) - 0.2, 0, clip_on=False,
-                               fill=False, edgecolor='black', lw=2, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 10, name_1, ha="center")
+                               fill=False, edgecolor='black', lw=3, linestyle="-"))
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 10, name_1, ha="center", fontsize=14)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 3), len(group_2.columns) - 0.2,
-                               0, clip_on=False, fill=False, edgecolor='black', lw=2, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 10, name_2, ha="center")
+                               0, clip_on=False, fill=False, edgecolor='black', lw=3, linestyle="-"))
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 10, name_2, ha="center", fontsize=14)
 
-    elif 140 > len(cluster_frame.index) >= 60:
+    elif 130 > len(cluster_frame.index) >= 50:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 1.4), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 4.5, name_1, ha="center")
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 4.5, name_1, ha="center", fontsize=14)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 1.4), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 4.5, name_2, ha="center")
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 4.5, name_2, ha="center", fontsize=14)
 
-    elif 60 > len(cluster_frame.index) > 15:
+    elif 50 > len(cluster_frame.index) > 25:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.8), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 2, name_1, ha="center")
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 2.5, name_1, ha="center", fontsize=14)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.8), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 2, name_2, ha="center")
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 2.5, name_2, ha="center", fontsize=14)
+
+    elif 25 >= len(cluster_frame.index) >= 14:
+        # Left Group
+        ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.4), len(group_1.columns) - 0.2, 0, clip_on=False,
+                               fill=False, edgecolor='black', lw=4, linestyle="-"))
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 1.2, name_1, ha="center", fontsize=14)
+
+        # Right Group
+        ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.4), len(group_2.columns) - 0.2,
+                               0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 1.2, name_2, ha="center", fontsize=14)
 
     else:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.2), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 0.6, name_1, ha="center")
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 0.6, name_1, ha="center", fontsize=14)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.2), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center")
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center", fontsize=14)
+
+    # Save the significant proteins
+    # cluster_frame.to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Significant Proteins " + comparison + ".csv")
 
     # Save and Show Figure
     plt.savefig("Figures" + "\\" + "Cluster " + comparison + ".png")
     plt.show()
 
 
-def create_venn(file):
+def create_venn(file, comparison):
     sig_proteins = pd.read_excel(file, "Sheet1")
+    name_1 = comparison.split(" v. ")[0]
+    name_2 = comparison.split(" v. ")[1]
+    list_1 = sig_proteins[name_1]
+    list_2 = sig_proteins[name_2]
 
-    for sex in ["Male", "Female"]:
-        sig_pfc_ko = sig_proteins[sex + " PFC KO"]
-        sig_pfc_wt = sig_proteins[sex + " PFC WT"]
-        sig_hip_ko = sig_proteins[sex + " HIP KO"]
-        sig_hip_wt = sig_proteins[sex + " HIP WT"]
+    colors = ("royalblue", "pink")
 
-        colors = ()
-        if sex == "Male":
-            colors = ("blue", "teal")
-        elif sex == "Female":
-            colors = ("pink", "purple")
+    # Create PFC Venn Diagram
+    fig, ax = plt.subplots()
+    fig.set_size_inches(4, 4)
+    v1 = venn2([set(list_1), set(list_2)], ("Unique to Male", "Unique to Female"), ax=ax, set_colors=colors)
+    c1 = venn2_circles([set(list_1), set(list_2)])
 
-        # Create PFC Venn Diagram
-        fig, ax = plt.subplots()
-        fig.set_size_inches(5, 4)
-        v1 = venn2([set(sig_pfc_wt), set(sig_pfc_ko)], ("Unique to WT", "Unique to KO"), ax=ax, set_colors=colors)
-        c1 = venn2_circles([set(sig_pfc_wt), set(sig_pfc_ko)])
+    # PFC Diagram Customization
+    c1[0].set_edgecolor("white")
+    c1[1].set_edgecolor("white")
+    plt.suptitle(comparison, y=0.99)
+    # for text in v1.set_labels:
+    #     text.set_fontsize(16)
+    # for text in v1.subset_labels:
+    #     text.set_fontsize(16)
 
-        # PFC Diagram Customization
-        c1[0].set_edgecolor("white")
-        c1[1].set_edgecolor("white")
-        plt.suptitle(sex + " PFC WT vs. KO", fontsize=24, y=0.99)
-        for text in v1.set_labels:
-            text.set_fontsize(16)
-        for text in v1.subset_labels:
-            text.set_fontsize(16)
+    # Find proteins in shared circle and annotate
+    shared = list(set(list_1) & set(list_2))
+    nan_count = 0
+    share_count = 0
+    for x in range(len(shared)):
+        shared[x] = str(shared[x])
+        if shared[x].find("|") >= 0:
+            shared[x] = shared[x].split("|")[0]
+        if shared[x].find(";") >= 0:
+            shared[x] = "H4 group"
 
-        # Find proteins in shared circle and annotate
-        shared1 = list(set(sig_pfc_ko) & set(sig_pfc_wt))
-        nan_count = 0
-        share_count = 0
-        for x in range(len(shared1)):
-            shared1[x] = str(shared1[x])
-            if shared1[x].find("|") >= 0:
-                shared1[x] = shared1[x].split("|")[0]
-            if shared1[x].find(";") >= 0:
-                shared1[x] = "H4 group"
+        if shared[x] == "nan":
+            nan_count += 1
+        else:
+            share_count += 1
 
-            if shared1[x] == "nan":
-                nan_count += 1
-            else:
-                share_count += 1
+    for x in range(nan_count):
+        shared.remove("nan")
 
-        for x in range(nan_count):
-            shared1.remove("nan")
-        shared1 = ", ".join(shared1)
-        if len(shared1) > 30:
-            shared1 = shared1[:shared1.find(",", 30) + 1] + "\n" + shared1[shared1.find(",", 30) + 1:]
-        if len(shared1) > 60:
-            shared1 = shared1[:shared1.find(",", 60) + 1] + "\n" + shared1[shared1.find(",", 60) + 1:]
-        if len(shared1) > 90:
-            shared1 = shared1[:shared1.find(",", 90) + 1] + "\n" + shared1[shared1.find(",", 90) + 1:]
-        plt.annotate(shared1, xy=v1.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
-                     ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'),
-                     fontproperties={'size': 14})
-        v1.get_label_by_id("11").set_text(str(share_count))
+    shared = ", ".join(shared)
 
-        # Move labels to the top of circles
-        l1 = v1.get_label_by_id("A")
-        x, y = l1.get_position()
-        l1.set_position((x + 0.16, -y + 0.1))
-        l2 = v1.get_label_by_id("B")
-        x, y = l2.get_position()
-        l2.set_position((x - 0.16, -y + 0.1))
+    if len(shared) < 3:
+        shared = "None"
+    if len(shared) > 30:
+        shared = shared[:shared.find(",", 30) + 1] + "\n" + shared[shared.find(",", 30) + 1:]
+    if len(shared) > 60:
+        shared = shared[:shared.find(",", 60) + 1] + "\n" + shared[shared.find(",", 60) + 1:]
+    if len(shared) > 90:
+        shared = shared[:shared.find(",", 90) + 1] + "\n" + shared[shared.find(",", 90) + 1:]
 
-        # Show PFC Diagram
-        plt.savefig(sex + " PFC WT vs. KO.jpg")
-        plt.show()
+    plt.annotate(shared, xy=v1.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
+                 ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'))
 
-        # --------------------------------------------------------------------------------------------------------------
+    v1.get_label_by_id("11").set_text(str(share_count))
 
-        # Create HIP Venn Diagram
-        fig, ax = plt.subplots()
-        fig.set_size_inches(5, 4)
-        v2 = venn2([set(sig_hip_wt), set(sig_hip_ko)], ("Unique to WT", "Unique to KO"), ax=ax, set_colors=colors)
-        c2 = venn2_circles([set(sig_hip_wt), set(sig_hip_ko)])
+    # Move labels to the top of circles
+    l1 = v1.get_label_by_id("A")
+    x, y = l1.get_position()
+    l1.set_position((x + 0.16, -y + 0.1))
+    l2 = v1.get_label_by_id("B")
+    x, y = l2.get_position()
+    l2.set_position((x - 0.16, -y + 0.1))
 
-        # HIP Diagram Customization
-        c2[0].set_edgecolor("white")
-        c2[1].set_edgecolor("white")
-        plt.suptitle(sex + " HIP WT vs. KO", fontsize=24, y=0.99)
-        for text in v2.set_labels:
-            text.set_fontsize(16)
-        for text in v2.subset_labels:
-            text.set_fontsize(16)
+    # Show PFC Diagram
+    plt.savefig("Figures" + "\\" + "Venn Diagram " + comparison + ".png")
+    plt.show()
 
-        # Find proteins in shared circle and annotate
-        shared2 = list(set(sig_pfc_ko) & set(sig_pfc_wt))
-        nan_count = 0
-        share_count = 0
-        for x in range(len(shared2)):
-            shared2[x] = str(shared2[x])
-            if shared2[x].find("|") >= 0:
-                shared2[x] = shared2[x].split("|")[0]
-            if shared2[x].find(";") >= 0:
-                shared2[x] = "H4 group"
 
-            if shared2[x] == "nan":
-                nan_count += 1
-            else:
-                share_count += 1
+def create_scatter(scatter_frame, comparison, exceptions=None):
+    q1 = {"x": [], "y": [], "id": []}
+    q2 = {"x": [], "y": [], "id": []}
+    q3 = {"x": [], "y": [], "id": []}
+    q4 = {"x": [], "y": [], "id": []}
+    center = {"x": [], "y": [], "id": []}
+    fig, ax = plt.subplots()
+    fig.set_size_inches(7, 7)
+    plotted = {}
 
-        for x in range(nan_count):
-            shared2.remove("nan")
-        shared2 = ", ".join(shared2)
-        if len(shared2) > 30:
-            shared2 = shared2[:shared2.find(",", 30) + 1] + "\n" + shared2[shared2.find(",", 30) + 1:]
-        if len(shared2) > 60:
-            shared2 = shared2[:shared2.find(",", 60) + 1] + "\n" + shared2[shared2.find(",", 60) + 1:]
-        if len(shared2) > 90:
-            shared2 = shared2[:shared2.find(",", 90) + 1] + "\n" + shared2[shared2.find(",", 90) + 1:]
-        plt.annotate(shared2, xy=v2.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
-                     ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'),
-                     fontproperties={'size': 14})
-        v2.get_label_by_id("11").set_text(str(share_count))
+    for x in range(len(scatter_frame.index)):
 
-        # Move labels to the top of circles
-        l1 = v2.get_label_by_id("A")
-        x, y = l1.get_position()
-        l1.set_position((x + 0.16, -y + 0.1))
-        l2 = v2.get_label_by_id("B")
-        x, y = l2.get_position()
-        l2.set_position((x - 0.16, -y + 0.1))
+        # Adjust protein ID so it includes just protein name
+        protein_id = str(scatter_frame["Protein"][x])
+        if protein_id.find("GN=") >= 0:
+            protein_id = protein_id.split()
+            protein_id = protein_id[-3]
+            protein_id = protein_id[3:]
+        elif protein_id.find("|") >= 0:
+            protein_id = protein_id.split("|")[2]
+            protein_id = protein_id.split("_")[0]
 
-        # Show HIP Diagram
-        plt.savefig(sex + " HIP WT vs. KO.jpg")
-        plt.show()
+        # Record location of HMGB1 separate from other proteins
+        if protein_id == "Hmgb1":
+            hmgb1_x = scatter_frame["WT Fold Change"][x]
+            hmgb1_y = scatter_frame["KO Fold Change"][x]
 
-    # ******************************************************************************************************************
+        # Record locations of all proteins with positive fold change for both WT and KO animals
+        if (scatter_frame["WT Fold Change"][x] >= 1 and scatter_frame["KO Fold Change"][x] >= 0) or \
+                (scatter_frame["WT Fold Change"][x] >= 0 and scatter_frame["KO Fold Change"][x] >= 1):
+            q1["x"] += [scatter_frame["WT Fold Change"][x]]
+            q1["y"] += [scatter_frame["KO Fold Change"][x]]
+            q1["id"] += [protein_id]
 
-    for genotype in ["WT", "KO"]:
-        sig_pfc_male = sig_proteins["Male PFC " + genotype]
-        sig_pfc_female = sig_proteins["Female PFC " + genotype]
-        sig_hip_male = sig_proteins["Male HIP " + genotype]
-        sig_hip_female = sig_proteins["Female HIP " + genotype]
+        # Record locations of all proteins with negative fold change for WT and positive fold change for KO animals
+        elif (scatter_frame["WT Fold Change"][x] <= -1 and scatter_frame["KO Fold Change"][x] >= 0) or \
+                (scatter_frame["WT Fold Change"][x] <= 0 and scatter_frame["KO Fold Change"][x] >= 1):
+            q2["x"] += [scatter_frame["WT Fold Change"][x]]
+            q2["y"] += [scatter_frame["KO Fold Change"][x]]
+            q2["id"] += [protein_id]
 
-        colors = ()
-        if genotype == "WT":
-            colors = ("blue", "pink")
-        elif genotype == "KO":
-            colors = ("teal", "purple")
+        # Record locations of all proteins with negative fold change for both WT and KO animals
+        elif (scatter_frame["WT Fold Change"][x] <= -1 and scatter_frame["KO Fold Change"][x] <= 0) or \
+                (scatter_frame["WT Fold Change"][x] <= 0 and scatter_frame["KO Fold Change"][x] <= -1):
+            q3["x"] += [scatter_frame["WT Fold Change"][x]]
+            q3["y"] += [scatter_frame["KO Fold Change"][x]]
+            q3["id"] += [protein_id]
 
-        # Create PFC Venn Diagram
-        fig, ax = plt.subplots()
-        fig.set_size_inches(5, 4)
-        v1 = venn2([set(sig_pfc_male), set(sig_pfc_female)], ("Unique to Male", "Unique to Female"), ax=ax,
-                   set_colors=colors)
-        c1 = venn2_circles([set(sig_pfc_male), set(sig_pfc_female)])
+        # Record locations of all proteins with positive fold change for WT and negative fold change for KO animals
+        elif (scatter_frame["WT Fold Change"][x] >= 1 and scatter_frame["KO Fold Change"][x] >= 0) or \
+                (scatter_frame["WT Fold Change"][x] >= 0 and scatter_frame["KO Fold Change"][x] >= 1):
+            q3["x"] += [scatter_frame["WT Fold Change"][x]]
+            q3["y"] += [scatter_frame["KO Fold Change"][x]]
+            q3["id"] += [protein_id]
 
-        # PFC Diagram Customization
-        c1[0].set_edgecolor("white")
-        c1[1].set_edgecolor("white")
-        plt.suptitle(genotype + " PFC Male vs. Female", fontsize=24, y=0.99)
-        for text in v1.set_labels:
-            text.set_fontsize(16)
-        for text in v1.subset_labels:
-            text.set_fontsize(16)
+        # Record locations of all proteins with fold changes below threshold
+        elif -1 < scatter_frame["WT Fold Change"][x] < 1 and -1 < scatter_frame["KO Fold Change"][x] < 1:
+            center["x"] += [scatter_frame["WT Fold Change"][x]]
+            center["y"] += [scatter_frame["KO Fold Change"][x]]
 
-        # Find proteins in shared circle and annotate
-        shared1 = list(set(sig_pfc_male) & set(sig_pfc_female))
-        nan_count = 0
-        share_count = 0
-        for x in range(len(shared1)):
-            shared1[x] = str(shared1[x])
-            if shared1[x].find("|") >= 0:
-                shared1[x] = shared1[x].split("|")[0]
-            if shared1[x].find(";") >= 0:
-                shared1[x] = "H4 group"
+    # Plot all proteins with colors/annotations according to their quadrant
+    for quadrant, color, marker, markersize in zip([center, q1, q2, q3, q4],
+                                                   ["gray", "blue", "purple", "red", "purple"],
+                                                   [".", ".", ".", ".", "."],
+                                                   [30, 50, 50, 50, 50]):
+        sizes = [markersize] * len(quadrant["x"])
+        ax.scatter(quadrant["x"], quadrant["y"], sizes, c=color, marker=marker)
+        # if not quadrant == center:
+        #     for x in range(len(quadrant["id"])):
+        #         plotted[quadrant["id"][x]] = ax.annotate(quadrant["id"][x], ha="center",
+        #                                                  xy=(quadrant["x"][x], quadrant["y"][x]), xytext=(0, 5),
+        #                                                  arrowprops={"arrowstyle": "-", "color": "black"},
+        #                                                  textcoords="offset points")
 
-            if shared1[x] == "nan":
-                nan_count += 1
-            else:
-                share_count += 1
+    # Adjust the labels of any exceptions that were passed to the function
+    if exceptions is not None:
+        for x in exceptions:
+            if x in plotted.keys():
+                plotted[x].set_text("")
 
-        for x in range(nan_count):
-            shared1.remove("nan")
-        shared1 = ", ".join(shared1)
-        if len(shared1) > 30:
-            shared1 = shared1[:shared1.find(",", 30) + 1] + "\n" + shared1[shared1.find(",", 30) + 1:]
-        if len(shared1) > 60:
-            shared1 = shared1[:shared1.find(",", 60) + 1] + "\n" + shared1[shared1.find(",", 60) + 1:]
-        if len(shared1) > 90:
-            shared1 = shared1[:shared1.find(",", 90) + 1] + "\n" + shared1[shared1.find(",", 90) + 1:]
-        plt.annotate(shared1, xy=v1.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
-                     ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'),
-                     fontproperties={'size': 14})
-        v1.get_label_by_id("11").set_text(str(share_count))
+    # Highlight HMGB1 in yellow
+    if "hmgb1_x" in locals():
+        ax.scatter(x=hmgb1_x, y=hmgb1_y, c="yellow", alpha=0.5, marker="o")
+        ax.annotate("Hmgb1", xy=(hmgb1_x, hmgb1_y), xytext=(0, 5), textcoords="offset points",
+                    arrowprops={"arrowstyle": "-", "color": "black"}, ha="center")
 
-        # Move labels to the top of circles
-        l1 = v1.get_label_by_id("A")
-        x, y = l1.get_position()
-        l1.set_position((x + 0.16, -y + 0.1))
-        l2 = v1.get_label_by_id("B")
-        x, y = l2.get_position()
-        l2.set_position((x - 0.16, -y + 0.1))
+    # Figure title and axis titles
+    ax.set_xlabel(r"$log_{2}(WT-Fold Change)$", fontsize="16")
+    ax.set_ylabel(r"$log_{2}(KO-Fold Change)$", fontsize="16")
+    plt.suptitle(comparison, fontsize="16")
 
-        # Show PFC Diagram
-        plt.savefig(genotype + " PFC Male vs. Female.jpg")
-        plt.show()
+    # Formatting
+    obj3 = ax.plot([-1, 1, 1, -1, -1], [1, 1, -1, -1, 1], linestyle=(0, (5, 10)), c="gray")
 
-        # --------------------------------------------------------------------------------------------------------------
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
 
-        # Create HIP Venn Diagram
-        fig, ax = plt.subplots()
-        fig.set_size_inches(5, 4)
-        v2 = venn2([set(sig_hip_male), set(sig_hip_female)], ("Unique to Male", "Unique to Female"), ax=ax,
-                   set_colors=colors)
-        c2 = venn2_circles([set(sig_hip_male), set(sig_hip_female)])
+    ax.axvline(x=0, linestyle="-", c="black")
+    ax.axhline(y=0, linestyle="-", c="black")
 
-        # HIP Diagram Customization
-        c2[0].set_edgecolor("white")
-        c2[1].set_edgecolor("white")
-        plt.suptitle(genotype + " HIP Male vs. Female", fontsize=24, y=0.99)
-        for text in v2.set_labels:
-            text.set_fontsize(16)
-        for text in v2.subset_labels:
-            text.set_fontsize(16)
+    ax.spines["bottom"].set_color("black")
+    ax.spines["top"].set_color("black")
+    ax.spines["left"].set_color("black")
+    ax.spines["right"].set_color("black")
 
-        # Find proteins in shared circle and annotate
-        shared2 = list(set(sig_hip_male) & set(sig_hip_female))
-        nan_count = 0
-        share_count = 0
-        for x in range(len(shared2)):
-            shared2[x] = str(shared2[x])
-            if shared2[x].find("|") >= 0:
-                shared2[x] = shared2[x].split("|")[0]
-            if shared2[x].find(";") >= 0:
-                shared2[x] = "H4 group"
+    ax.spines["bottom"].set_linewidth(2)
+    ax.spines["top"].set_linewidth(2)
+    ax.spines["left"].set_linewidth(2)
+    ax.spines["right"].set_linewidth(2)
 
-            if shared2[x] == "nan":
-                nan_count += 1
-            else:
-                share_count += 1
-
-        for x in range(nan_count):
-            shared2.remove("nan")
-        shared2 = ", ".join(shared2)
-        if len(shared2) > 30:
-            shared2 = shared2[:shared2.find(",", 30) + 1] + "\n" + shared2[shared2.find(",", 30) + 1:]
-        if len(shared2) > 60:
-            shared2 = shared2[:shared2.find(",", 60) + 1] + "\n" + shared2[shared2.find(",", 60) + 1:]
-        if len(shared2) > 90:
-            shared2 = shared2[:shared2.find(",", 90) + 1] + "\n" + shared2[shared2.find(",", 90) + 1:]
-        plt.annotate(shared2, xy=v2.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
-                     ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'),
-                     fontproperties={'size': 14})
-        v2.get_label_by_id("11").set_text(str(share_count))
-
-        # Move labels to the top of circles
-        l1 = v2.get_label_by_id("A")
-        x, y = l1.get_position()
-        l1.set_position((x + 0.16, -y + 0.1))
-        l2 = v2.get_label_by_id("B")
-        x, y = l2.get_position()
-        l2.set_position((x - 0.16, -y + 0.1))
-
-        # Show HIP Diagram
-        plt.savefig(genotype + " HIP Male vs. Female.jpg")
-        plt.show()
+    fig.tight_layout()
+    plt.savefig("Figures" + "\\" + "Scatter " + comparison + ".png")
+    plt.show()
 
 
 def volcano_log(a):
@@ -1198,14 +1192,10 @@ if analysis == "Stress":
     sex_input = input(r"Input sex of mice: ")
     stress_comparison(file_input, sex_input)
 elif analysis == "Sex":
-    do_venn = input("Would you like to make Venn diagrams? Type 'Yes' or 'No': ")
-    if do_venn == "Yes":
-        venn_file_input = input(r"Input path of Venn diagram data file: ")
-        create_venn(venn_file_input)
-    elif do_venn == "No":
-        male_file_input = input(r"Input path of male raw data file: ")
-        female_file_input = input(r"Input path of female raw data file: ")
-        sex_comparison(male_file_input, female_file_input)
+    venn_file_input = input(r"Input path of Venn diagram data file: ")
+    male_file_input = input(r"Input path of male raw data file: ")
+    female_file_input = input(r"Input path of female raw data file: ")
+    sex_comparison(male_file_input, female_file_input, venn_file_input)
 elif analysis == "Genetic":
     male_file_input = input(r"Input path of male raw data file: ")
     female_file_input = input(r"Input path of female raw data file: ")
