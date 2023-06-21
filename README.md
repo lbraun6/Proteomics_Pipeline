@@ -15,6 +15,9 @@ Creates Venn diagrams from lists of proteins provided as the columns of the Exce
 ### -volcano_log(a): 
 Function that computes the base 10 logarithm of an integer a. In create_volcano.py, this function is applied to the pandas.Series containing the untransformed p-values of volcano_frame.
 
+### -create_scatter(scatter_frame, comparison):
+Creates a scatter frame that plots the fold change of the WT control v. stress comparison against the KO control v. stress comparison. The scatter_frame argument is a pandas dataframe containing a column labelled "Protein" containing the protein name, "WT Fold Change" computed as the quotient of the geometric mean of the WT stress group over the WT control group, and "KO Fold Change" computed in the same way as the WT, but with the KO animals.
+
 ## Description of Raw Data Analysis and Organization Function Contained in all_analyes.py
 The following 6 functions read raw data from raw data spreadsheets organized in the format of Franklin Male Analysis Results.xlsx and Franklin Female Analysis Results.xlsx. These sheets contain rows representing proteins and a hierarchically organized header dividing the columns representing each animal into different experimental groups. Each cell provides raw log10(intensity) values of the protein of the corresponding row for the animal of the corresponding column. Descriptions of each function can be found below:
 
@@ -35,5 +38,6 @@ Called by the four functions above to get the values corresponding to a certain 
 
 ### -compare_groups(group_1, group_2): 
 Also called by the same four functions to compare two groups whose values were obtained by get_group_vals(). Outputs the p-value of an independent t-test, the log2(fold change), the direction of regulation, and the values of the two groups.
+
 ## Instructions for Use
 Simply press run and follow the prompts that show up in the Python console. You should also have a folder named "Figures" in the same directory location where all_analyses.py is located.
