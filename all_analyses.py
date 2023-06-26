@@ -72,8 +72,8 @@ def genetic_comparison(male_file, female_file):
     female_hip_names = []
 
     for protein in male_raw_intensities.index:
-        male_pfc = compare_groups(get_group_vals(male_pfc_wt_ctl_protein_expression, protein),
-                                  get_group_vals(male_pfc_ko_ctl_protein_expression, protein))
+        male_pfc = compare_groups(get_group_vals(male_pfc_ko_ctl_protein_expression, protein),
+                                  get_group_vals(male_pfc_wt_ctl_protein_expression, protein))
         if isinstance(male_pfc, list):
             id_male_pfc += [protein]
             p_male_pfc += [male_pfc[0]]
@@ -87,8 +87,8 @@ def genetic_comparison(male_file, female_file):
                 male_pfc_cluster += [list_1 + list_2]
                 male_pfc_names += [protein]
 
-        male_hip = compare_groups(get_group_vals(male_hip_wt_ctl_protein_expression, protein),
-                                  get_group_vals(male_hip_ko_ctl_protein_expression, protein))
+        male_hip = compare_groups(get_group_vals(male_hip_ko_ctl_protein_expression, protein),
+                                  get_group_vals(male_hip_wt_ctl_protein_expression, protein))
         if isinstance(male_hip, list):
             id_male_hip += [protein]
             p_male_hip += [male_hip[0]]
@@ -103,8 +103,8 @@ def genetic_comparison(male_file, female_file):
                 male_hip_names += [protein]
 
     for protein in female_raw_intensities.index:
-        female_pfc = compare_groups(get_group_vals(female_pfc_wt_ctl_protein_expression, protein),
-                                    get_group_vals(female_pfc_ko_ctl_protein_expression, protein))
+        female_pfc = compare_groups(get_group_vals(female_pfc_ko_ctl_protein_expression, protein),
+                                    get_group_vals(female_pfc_wt_ctl_protein_expression, protein))
         if isinstance(female_pfc, list):
             id_female_pfc += [protein]
             p_female_pfc += [female_pfc[0]]
@@ -118,8 +118,8 @@ def genetic_comparison(male_file, female_file):
                 female_pfc_cluster += [list_1 + list_2]
                 female_pfc_names += [protein]
 
-        female_hip = compare_groups(get_group_vals(female_hip_wt_ctl_protein_expression, protein),
-                                    get_group_vals(female_hip_ko_ctl_protein_expression, protein))
+        female_hip = compare_groups(get_group_vals(female_hip_ko_ctl_protein_expression, protein),
+                                    get_group_vals(female_hip_wt_ctl_protein_expression, protein))
         if isinstance(female_hip, list):
             id_female_hip += [protein]
             p_female_hip += [female_hip[0]]
@@ -138,21 +138,21 @@ def genetic_comparison(male_file, female_file):
     male_hip_volcano = pd.DataFrame({"Protein": id_male_hip, "Fold Change": fc_male_hip, "p-Value": p_male_hip})
     female_hip_volcano = pd.DataFrame({"Protein": id_female_hip, "Fold Change": fc_female_hip, "p-Value": p_female_hip})
 
-    create_volcano(male_pfc_volcano, "Male PFC WT Control v. PFC KO Control")
-    create_cluster(male_pfc_cluster, male_pfc_wt_ctl_protein_expression, male_pfc_ko_ctl_protein_expression,
-                   "Male PFC WT Control v. Male PFC KO Control", male_pfc_names)
+    create_volcano(male_pfc_volcano, "Male PFC KO Control v. Male PFC WT Control")
+    create_cluster(male_pfc_cluster, male_pfc_ko_ctl_protein_expression, male_pfc_wt_ctl_protein_expression,
+                   "Male PFC KO Control v. Male PFC WT Control", male_pfc_names)
 
-    create_volcano(female_pfc_volcano, "Female PFC WT Control v. PFC KO Control")
-    create_cluster(female_pfc_cluster, female_pfc_wt_ctl_protein_expression, female_pfc_ko_ctl_protein_expression,
-                   "Female PFC WT Control v. Female PFC KO Control", female_pfc_names)
+    create_volcano(female_pfc_volcano, "Female PFC KO Control v. Female PFC WT Control")
+    create_cluster(female_pfc_cluster, female_pfc_ko_ctl_protein_expression, female_pfc_wt_ctl_protein_expression,
+                   "Female PFC KO Control v. Female PFC WT Control", female_pfc_names)
 
-    create_volcano(male_hip_volcano, "Male HIP WT Control v. HIP KO Control")
-    create_cluster(male_hip_cluster, male_hip_wt_ctl_protein_expression, male_hip_ko_ctl_protein_expression,
-                   "Male HIP WT Control v. Male HIP KO Control", male_hip_names)
+    create_volcano(male_hip_volcano, "Male HIP KO Control v. Male HIP WT Control")
+    create_cluster(male_hip_cluster, male_hip_ko_ctl_protein_expression, male_hip_wt_ctl_protein_expression,
+                   "Male HIP KO Control v. Male HIP WT Control", male_hip_names)
 
-    create_volcano(female_hip_volcano, "Female HIP WT Control v. HIP KO Control")
-    create_cluster(female_hip_cluster, female_hip_wt_ctl_protein_expression, female_hip_ko_ctl_protein_expression,
-                   "Female HIP WT Control v. Female HIP KO Control", female_hip_names)
+    create_volcano(female_hip_volcano, "Female HIP KO Control v. Male HIP WT Control")
+    create_cluster(female_hip_cluster, female_hip_ko_ctl_protein_expression, female_hip_wt_ctl_protein_expression,
+                   "Female HIP KO Control v. Female HIP WT Control", female_hip_names)
 
 
 def sex_comparison(male_file, female_file, venn_file):
@@ -229,10 +229,10 @@ def sex_comparison(male_file, female_file, venn_file):
     for protein in male_raw_intensities.index:
         if protein in female_raw_intensities.index:
             # PFC KO
-            male_pfc_ko = compare_groups(get_group_vals(male_pfc_ko_ctl_protein_expression, protein),
-                                         get_group_vals(male_pfc_ko_stress_protein_expression, protein))
-            female_pfc_ko = compare_groups(get_group_vals(female_pfc_ko_ctl_protein_expression, protein),
-                                           get_group_vals(female_pfc_ko_stress_protein_expression, protein))
+            male_pfc_ko = compare_groups(get_group_vals(male_pfc_ko_stress_protein_expression, protein),
+                                         get_group_vals(male_pfc_ko_ctl_protein_expression, protein))
+            female_pfc_ko = compare_groups(get_group_vals(female_pfc_ko_stress_protein_expression, protein),
+                                           get_group_vals(female_pfc_ko_ctl_protein_expression, protein))
 
             if isinstance(male_pfc_ko, list) and isinstance(female_pfc_ko, list):
                 if male_pfc_ko[0] <= 0.05 or female_pfc_ko[0] <= 0.05:
@@ -252,10 +252,10 @@ def sex_comparison(male_file, female_file, venn_file):
                             pfc_ko_names += [protein]
 
             # PFC WT
-            male_pfc_wt = compare_groups(get_group_vals(male_pfc_wt_ctl_protein_expression, protein),
-                                         get_group_vals(male_pfc_wt_stress_protein_expression, protein))
-            female_pfc_wt = compare_groups(get_group_vals(female_pfc_wt_ctl_protein_expression, protein),
-                                           get_group_vals(female_pfc_wt_stress_protein_expression, protein))
+            male_pfc_wt = compare_groups(get_group_vals(male_pfc_wt_stress_protein_expression, protein),
+                                         get_group_vals(male_pfc_wt_ctl_protein_expression, protein))
+            female_pfc_wt = compare_groups(get_group_vals(female_pfc_wt_stress_protein_expression, protein),
+                                           get_group_vals(female_pfc_wt_ctl_protein_expression, protein))
 
             if isinstance(male_pfc_wt, list) and isinstance(female_pfc_wt, list):
                 if male_pfc_wt[0] <= 0.05 or female_pfc_wt[0] <= 0.05:
@@ -275,10 +275,10 @@ def sex_comparison(male_file, female_file, venn_file):
                             pfc_wt_names += [protein]
 
             # HIP KO
-            male_hip_ko = compare_groups(get_group_vals(male_hip_ko_ctl_protein_expression, protein),
-                                         get_group_vals(male_hip_ko_stress_protein_expression, protein))
-            female_hip_ko = compare_groups(get_group_vals(female_hip_ko_ctl_protein_expression, protein),
-                                           get_group_vals(female_hip_ko_stress_protein_expression, protein))
+            male_hip_ko = compare_groups(get_group_vals(male_hip_ko_stress_protein_expression, protein),
+                                         get_group_vals(male_hip_ko_ctl_protein_expression, protein))
+            female_hip_ko = compare_groups(get_group_vals(female_hip_ko_stress_protein_expression, protein),
+                                           get_group_vals(female_hip_ko_ctl_protein_expression, protein))
 
             if isinstance(male_hip_ko, list) and isinstance(female_hip_ko, list):
                 if male_hip_ko[0] <= 0.05 or female_hip_ko[0] <= 0.05:
@@ -298,10 +298,10 @@ def sex_comparison(male_file, female_file, venn_file):
                             hip_ko_names += [protein]
 
             # HIP WT
-            male_hip_wt = compare_groups(get_group_vals(male_hip_wt_ctl_protein_expression, protein),
-                                         get_group_vals(male_hip_wt_stress_protein_expression, protein))
-            female_hip_wt = compare_groups(get_group_vals(female_hip_wt_ctl_protein_expression, protein),
-                                           get_group_vals(female_hip_wt_stress_protein_expression, protein))
+            male_hip_wt = compare_groups(get_group_vals(male_hip_wt_stress_protein_expression, protein),
+                                         get_group_vals(male_hip_wt_ctl_protein_expression, protein))
+            female_hip_wt = compare_groups(get_group_vals(female_hip_wt_stress_protein_expression, protein),
+                                           get_group_vals(female_hip_wt_ctl_protein_expression, protein))
 
             if isinstance(male_hip_wt, list) and isinstance(female_hip_wt, list):
                 if male_hip_wt[0] <= 0.05 or female_hip_wt[0] <= 0.05:
@@ -356,7 +356,7 @@ def sex_comparison(male_file, female_file, venn_file):
     #     hip_ko_volcano.to_excel(writer, sheet_name="HIP KO", index=False)
 
 
-def stress_comparison(file, sex):
+def stress_comparison(file, sex, venn_file):
     # Read raw data Excel sheet into a dataframe with a multilevel header. Index column is the protein name
     raw_intensities = pd.read_excel(file, "Raw log10 intensities", header=[0, 1, 2, 3], index_col=3)
     raw_intensities.replace("Missing Value", np.nan, inplace=True)
@@ -418,61 +418,61 @@ def stress_comparison(file, sex):
     # Iterate through every protein in the raw data file, select the values within matching control and stress groups,
     # compare these groups to calculate p-values and store the protein name, direction of regulation, and fold change
     for protein in raw_intensities.index:
-        pfc_ko = compare_groups(get_group_vals(pfc_ko_ctl_protein_expression, protein),
-                                get_group_vals(pfc_ko_stress_protein_expression, protein))
+        pfc_ko = compare_groups(get_group_vals(pfc_ko_stress_protein_expression, protein),
+                                get_group_vals(pfc_ko_ctl_protein_expression, protein))
         if isinstance(pfc_ko, list):
             id_pfc_ko += [protein]
             p_pfc_ko += [pfc_ko[0]]
             reg_pfc_ko += [pfc_ko[1]]
             fc_pfc_ko += [pfc_ko[2]]
             if pfc_ko[0] <= 0.05:
-                list_1 = pfc_ko[4]
-                list_2 = pfc_ko[3]
+                list_1 = pfc_ko[3]
+                list_2 = pfc_ko[4]
                 pd.Series(list_1).fillna(np.nanmean(list_1)).tolist()
                 pd.Series(list_2).fillna(np.nanmean(list_2)).tolist()
                 pfc_ko_cluster += [list_1 + list_2]
                 pfc_ko_names += [protein]
 
-        pfc_wt = compare_groups(get_group_vals(pfc_wt_ctl_protein_expression, protein),
-                                get_group_vals(pfc_wt_stress_protein_expression, protein))
+        pfc_wt = compare_groups(get_group_vals(pfc_wt_stress_protein_expression, protein),
+                                get_group_vals(pfc_wt_ctl_protein_expression, protein))
         if isinstance(pfc_wt, list):
             id_pfc_wt += [protein]
             p_pfc_wt += [pfc_wt[0]]
             reg_pfc_wt += [pfc_wt[1]]
             fc_pfc_wt += [pfc_wt[2]]
             if pfc_wt[0] <= 0.05:
-                list_1 = pfc_wt[4]
-                list_2 = pfc_wt[3]
+                list_1 = pfc_wt[3]
+                list_2 = pfc_wt[4]
                 pd.Series(list_1).fillna(np.nanmean(list_1)).tolist()
                 pd.Series(list_2).fillna(np.nanmean(list_2)).tolist()
                 pfc_wt_cluster += [list_1 + list_2]
                 pfc_wt_names += [protein]
 
-        hip_ko = compare_groups(get_group_vals(hip_ko_ctl_protein_expression, protein),
-                                get_group_vals(hip_ko_stress_protein_expression, protein))
+        hip_ko = compare_groups(get_group_vals(hip_ko_stress_protein_expression, protein),
+                                get_group_vals(hip_ko_ctl_protein_expression, protein))
         if isinstance(hip_ko, list):
             id_hip_ko += [protein]
             p_hip_ko += [hip_ko[0]]
             reg_hip_ko += [hip_ko[1]]
             fc_hip_ko += [hip_ko[2]]
             if hip_ko[0] <= 0.05:
-                list_1 = hip_ko[4]
-                list_2 = hip_ko[3]
+                list_1 = hip_ko[3]
+                list_2 = hip_ko[4]
                 pd.Series(list_1).fillna(np.nanmean(list_1)).tolist()
                 pd.Series(list_2).fillna(np.nanmean(list_2)).tolist()
                 hip_ko_cluster += [list_1 + list_2]
                 hip_ko_names += [protein]
 
-        hip_wt = compare_groups(get_group_vals(hip_wt_ctl_protein_expression, protein),
-                                get_group_vals(hip_wt_stress_protein_expression, protein))
+        hip_wt = compare_groups(get_group_vals(hip_wt_stress_protein_expression, protein),
+                                get_group_vals(hip_wt_ctl_protein_expression, protein))
         if isinstance(hip_wt, list):
             id_hip_wt += [protein]
             p_hip_wt += [hip_wt[0]]
             reg_hip_wt += [hip_wt[1]]
             fc_hip_wt += [hip_wt[2]]
             if hip_wt[0] <= 0.05:
-                list_1 = hip_wt[4]
-                list_2 = hip_wt[3]
+                list_1 = hip_wt[3]
+                list_2 = hip_wt[4]
                 pd.Series(list_1).fillna(np.nanmean(list_1)).tolist()
                 pd.Series(list_2).fillna(np.nanmean(list_2)).tolist()
                 hip_wt_cluster += [list_1 + list_2]
@@ -503,6 +503,9 @@ def stress_comparison(file, sex):
         create_scatter(pfc_scatter, "Male PFC WT v. KO")
         create_scatter(hip_scatter, "Male HIP WT v. KO")
 
+        create_venn(venn_file, "Male PFC WT v. Male PFC KO")
+        create_venn(venn_file, "Male HIP WT v. Male HIP KO")
+
         create_volcano(pfc_wt_volcano, sex + " PFC WT Stress v. PFC WT Control", exceptions=["Camkk2"])
         create_cluster(pfc_wt_cluster, pfc_wt_stress_protein_expression, pfc_wt_ctl_protein_expression,
                        sex + " PFC WT Stress v. " + sex + " PFC WT Control", pfc_wt_names)
@@ -522,6 +525,9 @@ def stress_comparison(file, sex):
     elif sex == "Female":
         create_scatter(pfc_scatter, "Female PFC WT v. KO")
         create_scatter(hip_scatter, "Female HIP WT v. KO")
+
+        create_venn(venn_file, "Female PFC WT v. Female PFC KO")
+        create_venn(venn_file, "Female HIP WT v. Female HIP KO")
 
         create_volcano(pfc_wt_volcano, sex + " PFC WT Stress v. PFC WT Control")
         create_cluster(pfc_wt_cluster, pfc_wt_stress_protein_expression, pfc_wt_ctl_protein_expression,
@@ -604,8 +610,8 @@ def resilience_comparison(male_file, female_file):
     female_hip_names = []
 
     for protein in male_raw_intensities.index:
-        male_pfc = compare_groups(get_group_vals(male_pfc_wt_ctl_protein_expression, protein),
-                                  get_group_vals(male_pfc_ko_stress_protein_expression, protein))
+        male_pfc = compare_groups(get_group_vals(male_pfc_ko_stress_protein_expression, protein),
+                                  get_group_vals(male_pfc_wt_ctl_protein_expression, protein))
         if isinstance(male_pfc, list):
             id_male_pfc += [protein]
             p_male_pfc += [male_pfc[0]]
@@ -619,8 +625,8 @@ def resilience_comparison(male_file, female_file):
                 male_pfc_cluster += [list_1 + list_2]
                 male_pfc_names += [protein]
 
-        male_hip = compare_groups(get_group_vals(male_hip_wt_ctl_protein_expression, protein),
-                                  get_group_vals(male_hip_ko_stress_protein_expression, protein))
+        male_hip = compare_groups(get_group_vals(male_hip_ko_stress_protein_expression, protein),
+                                  get_group_vals(male_hip_wt_ctl_protein_expression, protein))
         if isinstance(male_hip, list):
             id_male_hip += [protein]
             p_male_hip += [male_hip[0]]
@@ -635,8 +641,8 @@ def resilience_comparison(male_file, female_file):
                 male_hip_names += [protein]
 
     for protein in female_raw_intensities.index:
-        female_pfc = compare_groups(get_group_vals(female_pfc_wt_ctl_protein_expression, protein),
-                                    get_group_vals(female_pfc_ko_stress_protein_expression, protein))
+        female_pfc = compare_groups(get_group_vals(female_pfc_ko_stress_protein_expression, protein),
+                                    get_group_vals(female_pfc_wt_ctl_protein_expression, protein))
         if isinstance(female_pfc, list):
             id_female_pfc += [protein]
             p_female_pfc += [female_pfc[0]]
@@ -650,8 +656,8 @@ def resilience_comparison(male_file, female_file):
                 female_pfc_cluster += [list_1 + list_2]
                 female_pfc_names += [protein]
 
-        female_hip = compare_groups(get_group_vals(female_hip_wt_ctl_protein_expression, protein),
-                                    get_group_vals(female_hip_ko_stress_protein_expression, protein))
+        female_hip = compare_groups(get_group_vals(female_hip_ko_stress_protein_expression, protein),
+                                    get_group_vals(female_hip_wt_ctl_protein_expression, protein))
         if isinstance(female_hip, list):
             id_female_hip += [protein]
             p_female_hip += [female_hip[0]]
@@ -670,21 +676,21 @@ def resilience_comparison(male_file, female_file):
     male_hip_volcano = pd.DataFrame({"Protein": id_male_hip, "Fold Change": fc_male_hip, "p-Value": p_male_hip})
     female_hip_volcano = pd.DataFrame({"Protein": id_female_hip, "Fold Change": fc_female_hip, "p-Value": p_female_hip})
 
-    create_volcano(male_pfc_volcano, "Male PFC WT Control v. PFC KO Stress")
-    create_cluster(male_pfc_cluster, male_pfc_wt_ctl_protein_expression, male_pfc_ko_stress_protein_expression,
-                   "Male PFC WT Control v. Male PFC KO Stress", male_pfc_names)
+    create_volcano(male_pfc_volcano, "Male PFC KO Stress v. Male PFC WT Control")
+    create_cluster(male_pfc_cluster, male_pfc_ko_stress_protein_expression, male_pfc_wt_ctl_protein_expression,
+                   "Male PFC KO Stress v. Male PFC WT Control", male_pfc_names)
 
-    create_volcano(female_pfc_volcano, "Female PFC WT Control v. PFC KO Stress")
-    create_cluster(female_pfc_cluster, female_pfc_wt_ctl_protein_expression, female_pfc_ko_stress_protein_expression,
-                   "Female PFC WT Control v. Female PFC KO Stress", female_pfc_names)
+    create_volcano(female_pfc_volcano, "Female PFC KO Stress v. Female PFC WT Control")
+    create_cluster(female_pfc_cluster, female_pfc_ko_stress_protein_expression, female_pfc_wt_ctl_protein_expression,
+                   "Female PFC KO Stress v. Female PFC WT Control", female_pfc_names)
 
-    create_volcano(male_hip_volcano, "Male HIP WT Control v. HIP KO Stress")
-    create_cluster(male_hip_cluster, male_hip_wt_ctl_protein_expression, male_hip_ko_stress_protein_expression,
-                   "Male HIP WT Control v. Male HIP KO Stress", male_hip_names)
+    create_volcano(male_hip_volcano, "Male HIP KO Stress v. Male HIP WT Control")
+    create_cluster(male_hip_cluster, male_hip_ko_stress_protein_expression, male_hip_wt_ctl_protein_expression,
+                   "Male HIP KO Stress v. Male HIP WT Control", male_hip_names)
 
-    create_volcano(female_hip_volcano, "Female HIP WT Control v. HIP KO Stress")
-    create_cluster(female_hip_cluster, female_hip_wt_ctl_protein_expression, female_hip_ko_stress_protein_expression,
-                   "Female HIP WT Control v. Female HIP KO Stress", female_hip_names)
+    create_volcano(female_hip_volcano, "Female HIP KO Stress v. Female HIP WT Control")
+    create_cluster(female_hip_cluster, female_hip_ko_stress_protein_expression, female_hip_wt_ctl_protein_expression,
+                   "Female HIP KO Stress v. Female HIP WT Control", female_hip_names)
 
 
 def get_group_vals(group, protein):
@@ -717,6 +723,7 @@ def compare_groups(group_1, group_2):
 
 
 def create_volcano(volcano_frame, comparison, exceptions=None):
+    # Font Information: family=georgia, size=16 (annotations=14), color=black
     volcano_frame["p-Value"] = volcano_frame["p-Value"].apply(volcano_log)
     up_reg = {"x": [], "y": [], "id": []}
     down_reg = {"x": [], "y": [], "id": []}
@@ -767,7 +774,8 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
     down_reg.drop_duplicates(subset=["id"], inplace=True)
 
     # Plot significantly up-regulated proteins in blue with annotations
-    ax.scatter(up_reg["x"], up_reg["y"], c="b", marker=".")
+    sizes = [50] * len(up_reg["x"])
+    ax.scatter(up_reg["x"], up_reg["y"], sizes, c="b", marker=".")
     up_len = len(up_reg["x"])
     if len(up_reg["x"]) > 10:
         up_reg = up_reg.nlargest(10, "y", "all")
@@ -779,7 +787,8 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
                                                       xy=(up_reg["x"][x], up_reg["y"][x]),
                                                       xytext=(0, 5),
                                                       textcoords="offset points",
-                                                      arrowprops={"arrowstyle": "-", "color": "black"})
+                                                      arrowprops={"arrowstyle": "-", "color": "black"},
+                                                      fontsize=14)
             up_updated = False
         else:
             if not up_updated:
@@ -788,7 +797,8 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
                 up_updated = True
 
     # Plot significantly down-regulated proteins in red with annotations
-    ax.scatter(down_reg["x"], down_reg["y"], c="r", marker=".")
+    sizes = [50] * len(down_reg["x"])
+    ax.scatter(down_reg["x"], down_reg["y"], sizes, c="r", marker=".")
     down_len = len(down_reg["x"])
     if len(down_reg["x"]) > 10:
         down_reg = down_reg.nlargest(10, "y", "all")
@@ -800,7 +810,8 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
                                                           xy=(down_reg["x"][x], down_reg["y"][x]),
                                                           xytext=(0, 5),
                                                           textcoords="offset points",
-                                                          arrowprops={"arrowstyle": "-", "color": "black"})
+                                                          arrowprops={"arrowstyle": "-", "color": "black"},
+                                                          fontsize=14)
             down_updated = False
         else:
             if not down_updated:
@@ -817,7 +828,8 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
                 plotted_down[x].set_text("")
 
     # Plot non-significantly regulated proteins in gray
-    ax.scatter(un_reg["x"], un_reg["y"], c="gray", marker=".")
+    sizes = [30] * len(un_reg["x"])
+    ax.scatter(un_reg["x"], un_reg["y"], sizes, c="gray", marker=".")
 
     # Highlight HMGB1 in yellow
     if "hmgb1_x" in locals():
@@ -833,11 +845,11 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
     ax.set_xlim(x_left - 0.02, x_right + 0.02)
 
     # Label the number of up- and down-regulated proteins at the top of each section
-    obj1 = ax.text(x=0.01, y=0.99, s="Down-regulated: " + str(down_len), ha="left", va="top", fontsize="x-large",
+    obj1 = ax.text(x=0.01, y=0.99, s="Down-regulated: " + str(down_len), ha="left", va="top", fontsize=16,
                    transform=ax.transAxes)
-    obj2 = ax.text(x=0.99, y=0.99, s="Up-regulated: " + str(up_len), ha="right", va="top", fontsize="x-large",
+    obj2 = ax.text(x=0.99, y=0.99, s="Up-regulated: " + str(up_len), ha="right", va="top", fontsize=16,
                    transform=ax.transAxes)
-    obj3 = ax.text(x=0.01, y=0.01, s="Total: " + str(len(volcano_frame)), ha="left", va="bottom", fontsize="x-large",
+    obj3 = ax.text(x=0.01, y=0.01, s="Total: " + str(len(volcano_frame)), ha="left", va="bottom", fontsize=16,
                    transform=ax.transAxes)
 
     # Figure title and axis titles
@@ -868,11 +880,24 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
 
 
 def create_cluster(cluster_array, group_1, group_2, comparison, names):
-    # Font Information: family=georgia, size=14 (13 for y-ticks), color=black
+    # Font Information: family=georgia, size=16 (14 for y-ticks), color=black
     col_names = []
     row_names = []
     name_1 = comparison.split(" v. ")[0]
     name_2 = comparison.split(" v. ")[1]
+
+    remove_term = []
+    for descriptor in name_1.split():
+        if descriptor in name_2.split():
+            remove_term += [descriptor]
+
+    split_name_1 = name_1.split()
+    split_name_2 = name_2.split()
+    for term in remove_term:
+        split_name_1.remove(term)
+        split_name_2.remove(term)
+    name_1 = " ".join(split_name_1)
+    name_2 = " ".join(split_name_2)
 
     for x in names:
         protein_id = str(x)
@@ -902,9 +927,9 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
     c = sns.clustermap(cluster_frame, col_cluster=False, z_score=0, cmap=sns.color_palette("vlag_r", as_cmap=True),
                        cbar_kws=dict(orientation='horizontal'), dendrogram_ratio=0.15, xticklabels=False,
                        figsize=(6, 8), norm=mpl.colors.Normalize(vmin=-2, vmax=2))
-    plt.setp(c.ax_heatmap.yaxis.get_majorticklabels(), rotation=0, fontsize=13)
+    plt.setp(c.ax_heatmap.yaxis.get_majorticklabels(), rotation=0, fontsize=14)
     plt.subplots_adjust(bottom=0.1)
-    plt.suptitle(comparison, x=0.5, fontsize=14)
+    plt.suptitle(comparison, x=0.5, fontsize=16)
 
     if len(cluster_frame.index) <= 15:
         plt.subplots_adjust(right=0.85)
@@ -918,7 +943,7 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
     dendro_box.x1 -= 0.2
     c.cax.set_position(dendro_box)
     c.cax.xaxis.set_ticks_position("bottom")
-    c.ax_cbar.set_title("z-score of $log_{10}(intensity)$")
+    c.ax_cbar.set_title("z-score of $log_{10}(intensity)$", fontsize=16)
     for spine in c.ax_cbar.spines:
         c.ax_cbar.spines[spine].set_color('black')
         c.ax_cbar.spines[spine].set_linewidth(2)
@@ -935,56 +960,56 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 3), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 10, name_1, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 10, name_1, ha="center", fontsize=16)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 3), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 10, name_2, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 10, name_2, ha="center", fontsize=16)
 
     elif 130 > len(cluster_frame.index) >= 50:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 1.4), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 4.5, name_1, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 4.5, name_1, ha="center", fontsize=16)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 1.4), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 4.5, name_2, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 4.5, name_2, ha="center", fontsize=16)
 
     elif 50 > len(cluster_frame.index) > 25:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.8), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 2.5, name_1, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 2.5, name_1, ha="center", fontsize=16)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.8), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 2.5, name_2, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 2.5, name_2, ha="center", fontsize=16)
 
     elif 25 >= len(cluster_frame.index) >= 14:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.4), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 1.2, name_1, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 1.2, name_1, ha="center", fontsize=16)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.4), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 1.2, name_2, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 1.2, name_2, ha="center", fontsize=16)
 
     else:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.2), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 0.6, name_1, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 0.6, name_1, ha="center", fontsize=16)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.2), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center", fontsize=14)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center", fontsize=16)
 
     # Save the significant proteins
     # cluster_frame.to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Significant Proteins " + comparison + ".csv")
@@ -998,37 +1023,65 @@ def create_venn(file, comparison):
     sig_proteins = pd.read_excel(file, "Sheet1")
     name_1 = comparison.split(" v. ")[0]
     name_2 = comparison.split(" v. ")[1]
-    list_1 = sig_proteins[name_1]
-    list_2 = sig_proteins[name_2]
+    list_1 = list(sig_proteins[name_1])
+    list_2 = list(sig_proteins[name_2])
 
-    colors = ("royalblue", "pink")
+    # Find NaN count in list_1
+    nan_count = 0
 
-    # Create PFC Venn Diagram
+    for x in range(len(list_1)):
+        list_1[x] = str(list_1[x])
+        if list_1[x] == "nan":
+            nan_count += 1
+
+    for x in range(nan_count):
+        list_1.remove("nan")
+
+    # Find NaN count in list_2
+    nan_count = 0
+
+    for x in range(len(list_2)):
+        list_2[x] = str(list_2[x])
+        if list_2[x] == "nan":
+            nan_count += 1
+
+    for x in range(nan_count):
+        list_2.remove("nan")
+
+    # Set colors and label text based on comparison
+    colors = ("gray", "black")
+    labels = ("Unique to...", "Unique to...")
+
+    if "Male" in name_1.split() and "Female" in name_2.split():
+        colors = ("royalblue", "pink")
+        labels = ("Unique to Male", "Unique to Female")
+    elif "WT" in name_1.split() and "KO" in name_2.split():
+        if "Male" in name_1.split():
+            colors = ("teal", "green")
+            labels = ("Unique to WT", "Unique to KO")
+        elif "Female" in name_1.split():
+            colors = ("magenta", "orange")
+            labels = ("Unique to WT", "Unique to KO")
+
+    # Create Venn Diagram
     fig, ax = plt.subplots()
-    fig.set_size_inches(4, 4)
-    v1 = venn2([set(list_1), set(list_2)], ("Unique to Male", "Unique to Female"), ax=ax, set_colors=colors)
+    fig.set_size_inches(4.5, 4.5)
+    v1 = venn2([set(list_1), set(list_2)], labels, ax=ax, set_colors=colors)
     c1 = venn2_circles([set(list_1), set(list_2)])
 
-    # PFC Diagram Customization
+    # Venn diagram customization for all Venn diagrams
     c1[0].set_edgecolor("white")
     c1[1].set_edgecolor("white")
-    plt.suptitle(comparison, y=0.99)
-    # for text in v1.set_labels:
-    #     text.set_fontsize(16)
-    # for text in v1.subset_labels:
-    #     text.set_fontsize(16)
+    plt.suptitle(comparison, y=0.9, fontsize=16)
+    for text in v1.set_labels:
+        text.set_fontsize(16)
 
-    # Find proteins in shared circle and annotate
+    # Find proteins in shared circle
     shared = list(set(list_1) & set(list_2))
     nan_count = 0
     share_count = 0
     for x in range(len(shared)):
         shared[x] = str(shared[x])
-        if shared[x].find("|") >= 0:
-            shared[x] = shared[x].split("|")[0]
-        if shared[x].find(";") >= 0:
-            shared[x] = "H4 group"
-
         if shared[x] == "nan":
             nan_count += 1
         else:
@@ -1037,31 +1090,52 @@ def create_venn(file, comparison):
     for x in range(nan_count):
         shared.remove("nan")
 
-    shared = ", ".join(shared)
+    # Customize annotation and other properties based on whether diagram has a shared region
+    if len(shared) == 0:
+        # Annotate
+        plt.annotate("No shared proteins", xy=(0.5, 0.5), xytext=(0, -125),
+                     ha='center', xycoords='figure fraction', textcoords='offset points', fontsize=16)
+        v1.subset_labels[0].set_fontsize(16)
+        v1.subset_labels[1].set_fontsize(16)
 
-    if len(shared) < 3:
-        shared = "None"
-    if len(shared) > 30:
-        shared = shared[:shared.find(",", 30) + 1] + "\n" + shared[shared.find(",", 30) + 1:]
-    if len(shared) > 60:
-        shared = shared[:shared.find(",", 60) + 1] + "\n" + shared[shared.find(",", 60) + 1:]
-    if len(shared) > 90:
-        shared = shared[:shared.find(",", 90) + 1] + "\n" + shared[shared.find(",", 90) + 1:]
+        # Move labels to the top of circles
+        l1 = v1.get_label_by_id("A")
+        x, y = l1.get_position()
+        l1.set_position((x + 0.25, -y + 0.1))
+        l2 = v1.get_label_by_id("B")
+        x, y = l2.get_position()
+        l2.set_position((x - 0.25, -y + 0.1))
 
-    plt.annotate(shared, xy=v1.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
-                 ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'))
+    else:
+        # Adjust annotation based on length
+        shared = ", ".join(shared)
 
-    v1.get_label_by_id("11").set_text(str(share_count))
+        if len(shared) < 3:
+            shared = "None"
+        if len(shared) > 25:
+            shared = shared[:shared.find(",", 25) + 1] + "\n" + shared[shared.find(",", 25) + 1:]
+        if len(shared) > 50:
+            shared = shared[:shared.find(",", 50) + 1] + "\n" + shared[shared.find(",", 50) + 1:]
+        if len(shared) > 75:
+            shared = shared[:shared.find(",", 75) + 1] + "\n" + shared[shared.find(",", 75) + 1:]
 
-    # Move labels to the top of circles
-    l1 = v1.get_label_by_id("A")
-    x, y = l1.get_position()
-    l1.set_position((x + 0.16, -y + 0.1))
-    l2 = v1.get_label_by_id("B")
-    x, y = l2.get_position()
-    l2.set_position((x - 0.16, -y + 0.1))
+        # Annotate
+        plt.annotate(shared, xy=v1.get_label_by_id('11').get_position() - np.array([0, 0.05]), xytext=(0, -125),
+                     ha='center', textcoords='offset points', arrowprops=dict(arrowstyle='->', color='black'), fontsize=16)
 
-    # Show PFC Diagram
+        v1.get_label_by_id("11").set_text(str(share_count))
+        for text in v1.subset_labels:
+            text.set_fontsize(16)
+
+        # Move labels to the top of circles
+        l1 = v1.get_label_by_id("A")
+        x, y = l1.get_position()
+        l1.set_position((x + 0.16, -y + 0.1))
+        l2 = v1.get_label_by_id("B")
+        x, y = l2.get_position()
+        l2.set_position((x - 0.16, -y + 0.1))
+
+    # Show and save Venn diagram
     plt.savefig("Figures" + "\\" + "Venn Diagram " + comparison + ".png")
     plt.show()
 
@@ -1176,6 +1250,8 @@ def create_scatter(scatter_frame, comparison, exceptions=None):
     ax.spines["left"].set_linewidth(2)
     ax.spines["right"].set_linewidth(2)
 
+    pd.DataFrame(q2).to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Q2 of Scatter " + comparison + ".csv")
+
     fig.tight_layout()
     plt.savefig("Figures" + "\\" + "Scatter " + comparison + ".png")
     plt.show()
@@ -1185,12 +1261,13 @@ def volcano_log(a):
     return -1 * np.log10(a)
 
 
-analysis = input("Examine the effect of genetic manipulation, stress condition, sex, or experimental resilience "
-                 "profile? Type 'Genetic', 'Stress', 'Sex', or 'Resilience': ")
+analysis = input("Examine the effect of genetic manipulation, stress condition, sex, experimental resilience profile, "
+                 "or all? Type 'Genetic', 'Stress', 'Sex', 'Resilience', or All: ")
 if analysis == "Stress":
+    venn_file_input = input(r"Input path of Venn diagram data file: ")
     file_input = input(r"Input path of raw data file: ")
     sex_input = input(r"Input sex of mice: ")
-    stress_comparison(file_input, sex_input)
+    stress_comparison(file_input, sex_input, venn_file_input)
 elif analysis == "Sex":
     venn_file_input = input(r"Input path of Venn diagram data file: ")
     male_file_input = input(r"Input path of male raw data file: ")
@@ -1203,6 +1280,15 @@ elif analysis == "Genetic":
 elif analysis == "Resilience":
     male_file_input = input(r"Input path of male raw data file: ")
     female_file_input = input(r"Input path of female raw data file: ")
+    resilience_comparison(male_file_input, female_file_input)
+elif analysis == "All":
+    male_file_input = r"C:\Users\Luke\Desktop\College\Research\Dr. Franklin\Proteomics Pipeline\Franklin Male Analysis Results.xlsx"
+    female_file_input = r"C:\Users\Luke\Desktop\College\Research\Dr. Franklin\Proteomics Pipeline\Franklin Female Analysis Results.xlsx"
+    venn_file_input = r"C:\Users\Luke\Desktop\College\Research\Dr. Franklin\Proteomics Pipeline\Venn Diagram Data Set.xlsx"
+    stress_comparison(male_file_input, "Male", venn_file_input)
+    stress_comparison(female_file_input, "Female", venn_file_input)
+    sex_comparison(male_file_input, female_file_input, venn_file_input)
+    genetic_comparison(male_file_input, female_file_input)
     resilience_comparison(male_file_input, female_file_input)
 
 # C:\Users\Luke\Desktop\College\Research\Dr. Franklin\Proteomics Pipeline\Franklin Male Analysis Results.xlsx
