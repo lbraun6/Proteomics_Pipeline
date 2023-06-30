@@ -8,6 +8,7 @@ import scipy.stats as stats
 from adjustText import adjust_text
 import seaborn as sns
 from matplotlib.patches import Rectangle
+from matplotlib.ticker import FormatStrFormatter
 
 # Update font for all figures
 font = {'family': 'georgia'}
@@ -500,50 +501,50 @@ def stress_comparison(file, sex, venn_file):
                                 "KO Fold Change": scatter_hip_ko})
 
     if sex == "Male":
-        create_scatter(pfc_scatter, "Male PFC WT v. KO")
-        create_scatter(hip_scatter, "Male HIP WT v. KO")
+        create_scatter(pfc_scatter, "Male PFC WT v. Male PFC KO")
+        create_scatter(hip_scatter, "Male HIP WT v. Male HIP KO")
 
         create_venn(venn_file, "Male PFC WT v. Male PFC KO")
         create_venn(venn_file, "Male HIP WT v. Male HIP KO")
 
-        create_volcano(pfc_wt_volcano, sex + " PFC WT Stress v. PFC WT Control", exceptions=["Camkk2"])
+        create_volcano(pfc_wt_volcano, "Male PFC WT Stress v. Male PFC WT Control", exceptions=["Camkk2"])
         create_cluster(pfc_wt_cluster, pfc_wt_stress_protein_expression, pfc_wt_ctl_protein_expression,
-                       sex + " PFC WT Stress v. " + sex + " PFC WT Control", pfc_wt_names)
+                       "Male PFC WT Stress v. Male PFC WT Control", pfc_wt_names)
 
-        create_volcano(pfc_ko_volcano, sex + " PFC KO Stress v. PFC KO Control")
+        create_volcano(pfc_ko_volcano, "Male PFC KO Stress v. Male PFC KO Control")
         create_cluster(pfc_ko_cluster, pfc_ko_stress_protein_expression, pfc_ko_ctl_protein_expression,
-                       sex + " PFC KO Stress v. " + sex + " PFC KO Control", pfc_ko_names)
+                       "Male PFC KO Stress v. Male PFC KO Control", pfc_ko_names)
 
-        create_volcano(hip_wt_volcano, sex + " HIP WT Stress v. HIP WT Control")
+        create_volcano(hip_wt_volcano, "Male HIP WT Stress v. Male HIP WT Control")
         create_cluster(hip_wt_cluster, hip_wt_stress_protein_expression, hip_wt_ctl_protein_expression,
-                       sex + " HIP WT Stress v. " + sex + " HIP WT Control", hip_wt_names)
+                       "Male HIP WT Stress v. Male HIP WT Control", hip_wt_names)
 
-        create_volcano(hip_ko_volcano, sex + " HIP KO Stress v. HIP KO Control")
+        create_volcano(hip_ko_volcano, "Male HIP KO Stress v. Male HIP KO Control")
         create_cluster(hip_ko_cluster, hip_ko_stress_protein_expression, hip_ko_ctl_protein_expression,
-                       sex + " HIP KO Stress v. " + sex + " HIP KO Control", hip_ko_names)
+                       "Male HIP KO Stress v. Male HIP KO Control", hip_ko_names)
 
     elif sex == "Female":
-        create_scatter(pfc_scatter, "Female PFC WT v. KO")
-        create_scatter(hip_scatter, "Female HIP WT v. KO")
+        create_scatter(pfc_scatter, "Female PFC WT v. Female PFC KO")
+        create_scatter(hip_scatter, "Female HIP WT v. Female HIP KO")
 
         create_venn(venn_file, "Female PFC WT v. Female PFC KO")
         create_venn(venn_file, "Female HIP WT v. Female HIP KO")
 
-        create_volcano(pfc_wt_volcano, sex + " PFC WT Stress v. PFC WT Control")
+        create_volcano(pfc_wt_volcano, "Female PFC WT Stress v. Female PFC WT Control")
         create_cluster(pfc_wt_cluster, pfc_wt_stress_protein_expression, pfc_wt_ctl_protein_expression,
-                       sex + " PFC WT Stress v. " + sex + " PFC WT Control", pfc_wt_names)
+                       "Female PFC WT Stress v. Female PFC WT Control", pfc_wt_names)
 
-        create_volcano(pfc_ko_volcano, sex + " PFC KO Stress v. PFC KO Control")
+        create_volcano(pfc_ko_volcano, "Female PFC KO Stress v. Female PFC KO Control")
         create_cluster(pfc_ko_cluster, pfc_ko_stress_protein_expression, pfc_ko_ctl_protein_expression,
-                       sex + " PFC KO Stress v. " + sex + " PFC KO Control", pfc_ko_names)
+                       "Female PFC KO Stress v. Female PFC KO Control", pfc_ko_names)
 
-        create_volcano(hip_wt_volcano, sex + " HIP WT Stress v. HIP WT Control")
+        create_volcano(hip_wt_volcano, "Female HIP WT Stress v. Female HIP WT Control")
         create_cluster(hip_wt_cluster, hip_wt_stress_protein_expression, hip_wt_ctl_protein_expression,
-                       sex + " HIP WT Stress v. " + sex + " HIP WT Control", hip_wt_names)
+                       "Female HIP WT Stress v. Female HIP WT Control", hip_wt_names)
 
-        create_volcano(hip_ko_volcano, sex + " HIP KO Stress v. HIP KO Control")
+        create_volcano(hip_ko_volcano, "Female HIP KO Stress v. Female HIP KO Control")
         create_cluster(hip_ko_cluster, hip_ko_stress_protein_expression, hip_ko_ctl_protein_expression,
-                       sex + " HIP KO Stress v. " + sex + " HIP KO Control", hip_ko_names)
+                       "Female HIP KO Stress v. Female HIP KO Control", hip_ko_names)
 
     # with pd.ExcelWriter(file[:file.rfind("\\")] + "\\" + sex + " Volcano Plot Dataset.xlsx") as writer:
     #     pfc_wt_volcano.to_excel(writer, sheet_name="PFC WT", index=False)
@@ -835,14 +836,14 @@ def create_volcano(volcano_frame, comparison, exceptions=None):
     if "hmgb1_x" in locals():
         ax.scatter(x=hmgb1_x, y=hmgb1_y, c="yellow", alpha=0.5, marker="o")
         ax.annotate("Hmgb1", xy=(hmgb1_x, hmgb1_y), xytext=(0, 5), textcoords="offset points",
-                    arrowprops={"arrowstyle": "-", "color": "black"}, ha="center")
+                    arrowprops={"arrowstyle": "-", "color": "black"}, ha="center", fontsize=14)
 
     # Change axis limits to avoid text overlap/cut-off
     y_bot, y_top = ax.get_ylim()
     x_left, x_right = ax.get_xlim()
 
     ax.set_ylim(0, y_top + 0.3)
-    ax.set_xlim(x_left - 0.02, x_right + 0.02)
+    ax.set_xlim(x_left - 0.2, x_right + 0.2)
 
     # Label the number of up- and down-regulated proteins at the top of each section
     obj1 = ax.text(x=0.01, y=0.99, s="Down-regulated: " + str(down_len), ha="left", va="top", fontsize=16,
@@ -927,12 +928,10 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
     c = sns.clustermap(cluster_frame, col_cluster=False, z_score=0, cmap=sns.color_palette("vlag_r", as_cmap=True),
                        cbar_kws=dict(orientation='horizontal'), dendrogram_ratio=0.15, xticklabels=False,
                        figsize=(6, 8), norm=mpl.colors.Normalize(vmin=-2, vmax=2))
-    plt.setp(c.ax_heatmap.yaxis.get_majorticklabels(), rotation=0, fontsize=14)
+    plt.setp(c.ax_heatmap.yaxis.get_majorticklabels(), rotation=0, fontsize=16)
     plt.subplots_adjust(bottom=0.1)
-    plt.suptitle(comparison, x=0.5, fontsize=16)
-
-    if len(cluster_frame.index) <= 15:
-        plt.subplots_adjust(right=0.85)
+    plt.subplots_adjust(right=0.80)
+    plt.suptitle(comparison, x=0.5, fontsize=18)
 
     # Color Bar Formatting
     c.ax_col_dendrogram.set_visible(False)
@@ -960,56 +959,56 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 3), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 10, name_1, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 10, name_1, ha="center", fontsize=20)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 3), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 10, name_2, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 10, name_2, ha="center", fontsize=20)
 
     elif 130 > len(cluster_frame.index) >= 50:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 1.4), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 4.5, name_1, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 4.5, name_1, ha="center", fontsize=20)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 1.4), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=3, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 4.5, name_2, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 4.5, name_2, ha="center", fontsize=20)
 
     elif 50 > len(cluster_frame.index) > 25:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.8), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 2.5, name_1, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 2.5, name_1, ha="center", fontsize=20)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.8), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 2.5, name_2, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 2.5, name_2, ha="center", fontsize=20)
 
     elif 25 >= len(cluster_frame.index) >= 14:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.4), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 1.2, name_1, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 1.2, name_1, ha="center", fontsize=20)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.4), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 1.2, name_2, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 1.2, name_2, ha="center", fontsize=20)
 
     else:
         # Left Group
         ax.add_patch(Rectangle((0.2, len(cluster_frame.index) + 0.2), len(group_1.columns) - 0.2, 0, clip_on=False,
                                fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 0.6, name_1, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) / 2, len(cluster_frame.index) + 0.6, name_1, ha="center", fontsize=20)
 
         # Right Group
         ax.add_patch(Rectangle((len(group_1.columns) + 0.2, len(cluster_frame.index) + 0.2), len(group_2.columns) - 0.2,
                                0, clip_on=False, fill=False, edgecolor='black', lw=4, linestyle="-"))
-        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center", fontsize=16)
+        ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center", fontsize=20)
 
     # Save the significant proteins
     # cluster_frame.to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Significant Proteins " + comparison + ".csv")
@@ -1053,14 +1052,14 @@ def create_venn(file, comparison):
     labels = ("Unique to...", "Unique to...")
 
     if "Male" in name_1.split() and "Female" in name_2.split():
-        colors = ("royalblue", "pink")
+        colors = ("teal", "pink")
         labels = ("Unique to Male", "Unique to Female")
     elif "WT" in name_1.split() and "KO" in name_2.split():
         if "Male" in name_1.split():
             colors = ("teal", "green")
             labels = ("Unique to WT", "Unique to KO")
         elif "Female" in name_1.split():
-            colors = ("magenta", "orange")
+            colors = ("pink", "magenta")
             labels = ("Unique to WT", "Unique to KO")
 
     # Create Venn Diagram
@@ -1101,10 +1100,10 @@ def create_venn(file, comparison):
         # Move labels to the top of circles
         l1 = v1.get_label_by_id("A")
         x, y = l1.get_position()
-        l1.set_position((x + 0.25, -y + 0.1))
+        l1.set_position((x + 0.3, -y + 0.1))
         l2 = v1.get_label_by_id("B")
         x, y = l2.get_position()
-        l2.set_position((x - 0.25, -y + 0.1))
+        l2.set_position((x - 0.3, -y + 0.1))
 
     else:
         # Adjust annotation based on length
@@ -1130,10 +1129,10 @@ def create_venn(file, comparison):
         # Move labels to the top of circles
         l1 = v1.get_label_by_id("A")
         x, y = l1.get_position()
-        l1.set_position((x + 0.16, -y + 0.1))
+        l1.set_position((x + 0.2, -y + 0.1))
         l2 = v1.get_label_by_id("B")
         x, y = l2.get_position()
-        l2.set_position((x - 0.16, -y + 0.1))
+        l2.set_position((x - 0.2, -y + 0.1))
 
     # Show and save Venn diagram
     plt.savefig("Figures" + "\\" + "Venn Diagram " + comparison + ".png")
@@ -1189,11 +1188,11 @@ def create_scatter(scatter_frame, comparison, exceptions=None):
             q3["id"] += [protein_id]
 
         # Record locations of all proteins with positive fold change for WT and negative fold change for KO animals
-        elif (scatter_frame["WT Fold Change"][x] >= 1 and scatter_frame["KO Fold Change"][x] >= 0) or \
-                (scatter_frame["WT Fold Change"][x] >= 0 and scatter_frame["KO Fold Change"][x] >= 1):
-            q3["x"] += [scatter_frame["WT Fold Change"][x]]
-            q3["y"] += [scatter_frame["KO Fold Change"][x]]
-            q3["id"] += [protein_id]
+        elif (scatter_frame["WT Fold Change"][x] >= 1 and scatter_frame["KO Fold Change"][x] <= 0) or \
+                (scatter_frame["WT Fold Change"][x] >= 0 and scatter_frame["KO Fold Change"][x] <= -1):
+            q4["x"] += [scatter_frame["WT Fold Change"][x]]
+            q4["y"] += [scatter_frame["KO Fold Change"][x]]
+            q4["id"] += [protein_id]
 
         # Record locations of all proteins with fold changes below threshold
         elif -1 < scatter_frame["WT Fold Change"][x] < 1 and -1 < scatter_frame["KO Fold Change"][x] < 1:
@@ -1202,7 +1201,7 @@ def create_scatter(scatter_frame, comparison, exceptions=None):
 
     # Plot all proteins with colors/annotations according to their quadrant
     for quadrant, color, marker, markersize in zip([center, q1, q2, q3, q4],
-                                                   ["gray", "blue", "purple", "red", "purple"],
+                                                   ["gray", "blue", "orange", "red", "orange"],
                                                    [".", ".", ".", ".", "."],
                                                    [30, 50, 50, 50, 50]):
         sizes = [markersize] * len(quadrant["x"])
@@ -1224,21 +1223,51 @@ def create_scatter(scatter_frame, comparison, exceptions=None):
     if "hmgb1_x" in locals():
         ax.scatter(x=hmgb1_x, y=hmgb1_y, c="yellow", alpha=0.5, marker="o")
         ax.annotate("Hmgb1", xy=(hmgb1_x, hmgb1_y), xytext=(0, 5), textcoords="offset points",
-                    arrowprops={"arrowstyle": "-", "color": "black"}, ha="center")
+                    arrowprops={"arrowstyle": "-", "color": "black"}, ha="center", fontsize=14)
 
     # Figure title and axis titles
-    ax.set_xlabel(r"$log_{2}(WT-Fold Change)$", fontsize="16")
-    ax.set_ylabel(r"$log_{2}(KO-Fold Change)$", fontsize="16")
-    plt.suptitle(comparison, fontsize="16")
+    ax.set_xlabel(r"$log_{2}(WT-Fold Change)$", fontsize=16)
+    ax.set_ylabel(r"$log_{2}(KO-Fold Change)$", fontsize=16)
+    plt.suptitle(comparison, fontsize=18)
 
     # Formatting
     obj3 = ax.plot([-1, 1, 1, -1, -1], [1, 1, -1, -1, 1], linestyle=(0, (5, 10)), c="gray")
 
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
+    # Formatting axis ticks
+    x_min = int(scatter_frame["WT Fold Change"].min() // 1)
+    x_max = int((scatter_frame["WT Fold Change"].max() + 1) // 1)
 
+    y_min = int(scatter_frame["KO Fold Change"].min() // 1)
+    y_max = int((scatter_frame["KO Fold Change"].max() + 1) // 1)
+
+    x_ticks = range(x_min, x_max + 1)
+    y_ticks = range(y_min, y_max + 1)
+
+    plt.xticks(x_ticks, fontsize=16)
+    plt.yticks(y_ticks, fontsize=16)
+
+    # Add x=0 and y=0 lines
     ax.axvline(x=0, linestyle="-", c="black")
     ax.axhline(y=0, linestyle="-", c="black")
+
+    # Add arrows with annotations above each
+    ax.text(x=0.225, y=-0.205, s="Stress-induced\ndownregulation in WT", ha="center", va="center", fontsize=16,
+            transform=ax.transAxes)
+    ax.annotate('', xy=(0, -0.15), xycoords='axes fraction', xytext=(0.45, -0.15), arrowprops=dict(arrowstyle="->", color='k'))
+    ax.text(x=0.775, y=-0.205, s="Stress-induced\nupregulation in WT", ha="center", va="center", fontsize=16,
+            transform=ax.transAxes)
+    ax.annotate('', xy=(0.55, -0.15), xycoords='axes fraction', xytext=(1, -0.15), arrowprops=dict(arrowstyle="<-", color='k'))
+
+    ax.text(x=-0.205, y=0.225, s="Stress-induced\ndownregulation in KO", ha="center", va="center", fontsize=16,
+            transform=ax.transAxes, rotation="vertical")
+    ax.annotate('', xy=(-0.15, 0), xycoords='axes fraction', xytext=(-0.15, 0.45), arrowprops=dict(arrowstyle="->", color='k'))
+    ax.text(x=-0.205, y=0.775, s="Stress-induced\nupregulation in KO", ha="center", va="center", fontsize=16,
+            transform=ax.transAxes, rotation="vertical")
+    ax.annotate('', xy=(-0.15, 0.55), xycoords='axes fraction', xytext=(-0.15, 1), arrowprops=dict(arrowstyle="<-", color='k'))
+
+    # Add % annotation in quadrant 2
+    percent = str(round(((len(q2["x"]) + len(q4["x"])) / (len(q1["x"]) + len(q2["x"]) + len(q3["x"]) + len(q4["x"]))) * 100, 1))
+    ax.text(x=0.01, y=0.99, s=percent + "%\nHMGB1 Dependent", ha="left", va="top", fontsize=16, transform=ax.transAxes)
 
     ax.spines["bottom"].set_color("black")
     ax.spines["top"].set_color("black")
@@ -1250,9 +1279,13 @@ def create_scatter(scatter_frame, comparison, exceptions=None):
     ax.spines["left"].set_linewidth(2)
     ax.spines["right"].set_linewidth(2)
 
-    pd.DataFrame(q2).to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Q2 of Scatter " + comparison + ".csv")
+    with pd.ExcelWriter("Figures" + "\\" + "Protein Lists" + "\\" + "Q2+Q4 of Scatter Plot Dataset " + comparison + ".xlsx") as writer:
+        pd.DataFrame(q2).to_excel(writer, sheet_name="Q2", index=False)
+        pd.DataFrame(q4).to_excel(writer, sheet_name="Q4", index=False)
 
     fig.tight_layout()
+    plt.subplots_adjust(bottom=0.2, left=0.2)
+
     plt.savefig("Figures" + "\\" + "Scatter " + comparison + ".png")
     plt.show()
 
