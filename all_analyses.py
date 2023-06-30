@@ -1011,7 +1011,7 @@ def create_cluster(cluster_array, group_1, group_2, comparison, names):
         ax.text(len(group_1.columns) + len(group_2.columns) / 2, len(cluster_frame.index) + 0.6, name_2, ha="center", fontsize=20)
 
     # Save the significant proteins
-    # cluster_frame.to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Significant Proteins " + comparison + ".csv")
+    cluster_frame.to_csv("Figures" + "\\" + "Protein Lists" + "\\" + "Significant Proteins " + comparison + ".csv")
 
     # Save and Show Figure
     plt.savefig("Figures" + "\\" + "Cluster " + comparison + ".png")
